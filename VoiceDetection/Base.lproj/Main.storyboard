@@ -38,11 +38,11 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eFh-dj-i8x" customClass="DetectionCircleView" customModule="VoiceDetection" customModuleProvider="target">
-                                <rect key="frame" x="107" y="348" width="200" height="200"/>
+                                <rect key="frame" x="132" y="373" width="150" height="150"/>
                                 <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="kEU-jr-reM"/>
-                                    <constraint firstAttribute="height" constant="200" id="nv5-4x-H5P"/>
+                                    <constraint firstAttribute="width" constant="150" id="kEU-jr-reM"/>
+                                    <constraint firstAttribute="height" constant="150" id="nv5-4x-H5P"/>
                                 </constraints>
                             </view>
                         </subviews>

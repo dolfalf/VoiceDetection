@@ -34,6 +34,10 @@ class AudioViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.startUpdatingVolume()
+        
+        circleView.centerImage = UIImage(named: "jangga")
+        circleView.circleBackgroundColor = .lightGray
+        circleView.levelLineColor = .orange
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -123,11 +127,11 @@ class AudioViewController: UIViewController {
         //print("level:\(level)")
         
         if levelMeter.mPeakPower < -1.0 {
-            circleView.detectLavel = CGFloat(0)
+            circleView.detectLevel = CGFloat(0)
             return
         }
         
-        circleView.detectLavel = CGFloat(level)       //0 ~ 1
+        circleView.detectLevel = CGFloat(level)       //0 ~ 1
         
     }
 }

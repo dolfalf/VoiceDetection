@@ -10,28 +10,33 @@ import UIKit
 
 class DetectionCircleView: UIView {
 
-    var centerImageView = UIImageView(frame: .zero)
-    
-    var circleLayer = CALayer()
-    var lLayer = CAShapeLayer()
-    var rLayer = CAShapeLayer()
-    
-    var detectLavel = CGFloat(0) {
+    var detectLevel = CGFloat(0) {
         didSet {
             setNeedsDisplay()
         }
     }
     
+    var centerImage: UIImage? {
+        didSet {
+            centerImageView.image = centerImage
+        }
+    }
+    
+    var circleBackgroundColor = UIColor.lightGray
+    var levelLineColor = UIColor.orange
+    
+    private var centerImageView = UIImageView(frame: .zero)
+    
+    private var circleLayer = CALayer()
+    private var lLayer = CAShapeLayer()
+    private var rLayer = CAShapeLayer()
+    
     override func awakeFromNib() {
         
         backgroundColor = .clear
-        
-        centerImageView.image = UIImage(named: "jangga")
+        centerImageView.image = centerImage
         centerImageView.layer.masksToBounds = true
         addSubview(centerImageView)
-        
-        layer.addSublayer(lLayer)
-        
     }
     
     // Only override draw() if you perform custom drawing.
@@ -39,13 +44,12 @@ class DetectionCircleView: UIView {
     override func draw(_ rect: CGRect) {
         // Drawing code
         drawGrayCirlcle()
-        drawLevelMeter(level: detectLavel)
+        drawLevelMeter(level: detectLevel)
     }
     
     override func layoutSubviews() {
         //adjust layout
         setCenterImageLayout()
-        
     }
 
     func setCenterImageLayout() {
@@ -66,78 +70,67 @@ class DetectionCircleView: UIView {
     
     func drawGrayCirlcle() {
         
-        let circleLineWidth = CGFloat(20)
+        let circleLineWidth = CGFloat(bounds.width * 0.1)
         let circleSize = CGFloat(bounds.width/2 - circleLineWidth/2)
-        
-        let grayPath = UIBezierPath()
-        grayPath.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2), // 中心
-                     radius: circleSize, // 半径
-                     startAngle: 0, // 開始角度
-                     endAngle: .pi * 2.0, // 終了角度
-                     clockwise: true) // 時計回り
+        let path = UIBezierPath()
+        path.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2),
+                    radius: circleSize,
+                    startAngle: 0,
+                    endAngle: .pi * 2.0,
+                    clockwise: true)
 
-        let grayLayer = CAShapeLayer()
-        grayLayer.path = grayPath.cgPath
-        grayLayer.fillColor = UIColor.clear.cgColor // 塗り色
-        grayLayer.strokeColor = UIColor(red: 0.80, green: 0.80, blue: 0.80, alpha: 1.0).cgColor // 線の色
-        grayLayer.lineWidth = circleLineWidth // 線の幅
-        layer.addSublayer(grayLayer)
+        let circleLayer = CAShapeLayer()
+        circleLayer.path = path.cgPath
+        circleLayer.fillColor = UIColor.clear.cgColor
+        circleLayer.strokeColor = circleBackgroundColor.cgColor
+        circleLayer.lineWidth = circleLineWidth // 線の幅
+        layer.addSublayer(circleLayer)
     }
     
     func drawLevelMeter(level: CGFloat) {
         
-        
-        
-        //0.5 ~ 1
-        let startLevel = CGFloat(0.5)
-        
-        let circleLineWidth = CGFloat(20)
+        let startLevel = CGFloat(0.5)   // 0
+        let circleLineWidth = CGFloat(bounds.width * 0.1)
         let circleSize = CGFloat(bounds.width/2 - circleLineWidth/2)
         
         let leftPath = UIBezierPath()
-        leftPath.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2), // 中心
-                    radius: circleSize, // 半径
-            startAngle: .pi * startLevel, // 開始角度
-            endAngle: .pi * (startLevel + level), // 終了角度
-                    clockwise: true) // 時計回り
+        leftPath.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2),
+                        radius: circleSize,
+                        startAngle: .pi * startLevel,
+                        endAngle: .pi * (startLevel + level),
+                        clockwise: true)
 
         lLayer.removeFromSuperlayer()
         lLayer = CAShapeLayer()
         layer.addSublayer(lLayer)
         lLayer.path = leftPath.cgPath
-        lLayer.fillColor = UIColor.clear.cgColor // 塗り色
-        lLayer.strokeColor = UIColor.orange.cgColor // 線の色
-        lLayer.lineCap = .round
-        lLayer.lineWidth = circleLineWidth // 線の幅
+        lLayer.fillColor = UIColor.clear.cgColor
+        lLayer.strokeColor = levelLineColor.cgColor
+        lLayer.lineWidth = circleLineWidth
         
+        if level < 1 {
+            lLayer.lineCap = .round
+        }
         
         let rightPath = UIBezierPath()
-        rightPath.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2), // 中心
-                    radius: circleSize, // 半径
-            startAngle: .pi * startLevel, // 開始角度
-                    endAngle: .pi * (startLevel - level), // 終了角度
-                    clockwise: false) // 時計回り
+        rightPath.addArc(withCenter: CGPoint(x: bounds.width/2, y: bounds.height/2),
+                         radius: circleSize,
+                         startAngle: .pi * startLevel,
+                         endAngle: .pi * (startLevel - level),
+                         clockwise: false)
 
         rLayer.removeFromSuperlayer()
         rLayer = CAShapeLayer()
         layer.addSublayer(rLayer)
         rLayer.frame = bounds
         rLayer.path = rightPath.cgPath
-        rLayer.fillColor = UIColor.clear.cgColor // 塗り色
-        rLayer.strokeColor = UIColor.orange.cgColor // 線の色
+        rLayer.fillColor = UIColor.clear.cgColor
+        rLayer.strokeColor = levelLineColor.cgColor
+        rLayer.lineWidth = circleLineWidth
         
         if level < 1 {
             rLayer.lineCap = .round
         }
-        rLayer.lineWidth = circleLineWidth // 線の幅
         
-//        let animation = CABasicAnimation(keyPath: "strokeEnd")
-//        animation.duration = 0.3
-//        animation.fromValue = 0.9
-//        animation.toValue = 1.0
-//        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-//        animation.fillMode = .forwards
-//        animation.isRemovedOnCompletion = false
-//        rLayer.add(animation, forKey: animation.keyPath)
     }
 }
