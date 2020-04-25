@@ -27,6 +27,7 @@ class AudioViewController: UIViewController {
     @IBOutlet weak var peakTextField: UITextField!
     @IBOutlet weak var averageTextField: UITextField!
     @IBOutlet weak var circleView: DetectionCircleView!
+    @IBOutlet weak var levelLabel: UILabel!
     
     var queue: AudioQueueRef!
     var timer: Timer!
@@ -34,10 +35,13 @@ class AudioViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.startUpdatingVolume()
-        
+        view.backgroundColor = .white
         circleView.centerImage = UIImage(named: "jangga")
-        circleView.circleBackgroundColor = .lightGray
+        circleView.circleBackgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
         circleView.levelLineColor = .orange
+        self.loudLabel.text = "새로이 이노옴~~~"
+        self.loudLabel.textColor = .black
+        self.levelLabel.textColor = .black
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -121,17 +125,20 @@ class AudioViewController: UIViewController {
         // Show "LOUD!!" if mPeakPower is larger than -1.0
         self.loudLabel.isHidden = (levelMeter.mPeakPower >= -1.0) ? false : true
         
-        // -1 ~ 8
         
-        let level = ((levelMeter.mPeakPower + 1) * 0.8) * 0.1
-        //print("level:\(level)")
         
-        if levelMeter.mPeakPower < -1.0 {
+        if levelMeter.mPeakPower < -25 {
             circleView.detectLevel = CGFloat(0)
             return
         }
         
+        // //-30 ~ 0
+        // A:B= X:Y BX=AY   X= AY/B
+        let level = (levelMeter.mPeakPower  + 25) * 0.025
+        //0~30
+//        print("level:\(level)")
         circleView.detectLevel = CGFloat(level)       //0 ~ 1
         
+        levelLabel.text = String("\(level)")
     }
 }
